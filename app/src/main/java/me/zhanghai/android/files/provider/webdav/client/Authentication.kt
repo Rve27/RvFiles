@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2024 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -40,7 +41,7 @@ data class PasswordAuthentication(
     override fun createAuthenticatorInterceptor(authority: Authority): AuthenticatorInterceptor =
         object : AuthenticatorInterceptor {
             private val basicDigestAuthHandler = BasicDigestAuthHandler(
-                UrlUtils.hostToDomain(authority.host), authority.username, password
+                UrlUtils.hostToDomain(authority.host), authority.username, password.toCharArray()
             )
 
             override fun authenticate(route: Route?, response: Response): Request? =
