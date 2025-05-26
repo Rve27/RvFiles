@@ -30,7 +30,7 @@ android {
     compileSdk 35
     ndkVersion '27.2.12479018'
     defaultConfig {
-        applicationId 'me.zhanghai.android.files'
+        applicationId 'me.rve.files'
         minSdk 21
         // Not supporting foreground service timeout yet.
         //noinspection OldTargetApi

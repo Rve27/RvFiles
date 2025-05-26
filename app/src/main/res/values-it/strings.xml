@@ -7,7 +7,7 @@
 
 <resources>
 
-    <string name="app_name">Material Files</string>
+    <string name="app_name">RvFiles</string>
 
     <string name="close">Chiudi</string>
     <string name="copy">Copia</string>

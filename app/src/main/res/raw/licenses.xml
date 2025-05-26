@@ -7,6 +7,13 @@
 
 <notices>
 
+   <notice>
+        <name>RvFiles</name>
+        <url>https://github.com/Rve27/RvFiles</url>
+        <copyright>Copyright 2025 Rve</copyright>
+        <license>GNU General Public License 3.0</license>
+    </notice>
+
     <notice>
         <name>Material Files</name>
         <url>https://github.com/zhanghai/MaterialFiles</url>

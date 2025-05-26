@@ -1,37 +1,26 @@
 {
   "project_info": {
-    "project_number": "728501351509",
-    "firebase_url": "https://zhanghai-materialfiles.firebaseio.com",
-    "project_id": "zhanghai-materialfiles",
-    "storage_bucket": "zhanghai-materialfiles.appspot.com"
+    "project_number": "151511940947",
+    "project_id": "rvfiles-27",
+    "storage_bucket": "rvfiles-27.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:728501351509:android:007cb5eb181702a9",
+        "mobilesdk_app_id": "1:151511940947:android:6ccb82ada026b6cfcaaba6",
         "android_client_info": {
-          "package_name": "me.zhanghai.android.files"
+          "package_name": "me.rve.files"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "728501351509-3ul5c5u8jpd9q9gi4e7537bd31r5nkr5.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDUcQAOKRcCjsA-e5-cZHbt4HQQFDP4wA4"
+          "current_key": "GOOGLE_API_KEY"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "728501351509-3ul5c5u8jpd9q9gi4e7537bd31r5nkr5.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
