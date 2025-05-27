@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -25,35 +26,42 @@ class AboutFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View =
-        AboutFragmentBinding.inflate(inflater, container, false)
-            .also { binding = it }
-            .root
+    ): View {
+        binding = AboutFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val activity = requireActivity() as AppCompatActivity
         activity.setSupportActionBar(binding.toolbar)
-        activity.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        setupClickListeners()
+    }
+
+    private fun setupClickListeners() {
         binding.gitHubLayout.setOnClickListener { startActivitySafe(GITHUB_URI.createViewIntent()) }
         binding.licensesLayout.setOnClickListener { LicensesDialogFragment.show(this) }
+
 //#ifdef NONFREE
         binding.privacyPolicyLayout.isVisible = true
         binding.privacyPolicyLayout.setOnClickListener {
             startActivitySafe(PRIVACY_POLICY_URI.createViewIntent())
         }
 //#endif
+
         binding.authorNameLayout.setOnClickListener {
             startActivitySafe(AUTHOR_RESUME_URI.createViewIntent())
         }
-	binding.authorRvFilesNameLayout.setOnClickListener {
+        binding.authorRvFilesNameLayout.setOnClickListener {
             startActivitySafe(AUTHOR_RVFILES_TELEGRAM_URI.createViewIntent())
         }
         binding.authorGitHubLayout.setOnClickListener {
             startActivitySafe(AUTHOR_GITHUB_URI.createViewIntent())
         }
-	binding.authorRvFilesGitHubLayout.setOnClickListener {
+        binding.authorRvFilesGitHubLayout.setOnClickListener {
             startActivitySafe(AUTHOR_RVFILES_GITHUB_URI.createViewIntent())
         }
         binding.authorTwitterLayout.setOnClickListener {
@@ -63,12 +71,11 @@ class AboutFragment : Fragment() {
 
     companion object {
         private val GITHUB_URI = Uri.parse("https://github.com/Rve27/RvFiles")
-        private val PRIVACY_POLICY_URI =
-            Uri.parse("https://github.com/Rve27/RvFiles/blob/master/PRIVACY.md")
+        private val PRIVACY_POLICY_URI = Uri.parse("https://github.com/Rve27/RvFiles/blob/master/PRIVACY.md")
         private val AUTHOR_RESUME_URI = Uri.parse("https://resume.zhanghai.me/")
         private val AUTHOR_GITHUB_URI = Uri.parse("https://github.com/zhanghai")
         private val AUTHOR_TWITTER_URI = Uri.parse("https://twitter.com/zhanghai95")
-	private val AUTHOR_RVFILES_GITHUB_URI = Uri.parse("https://github.com/Rve27")
-	private val AUTHOR_RVFILES_TELEGRAM_URI = Uri.parse("https://t.me/rve270")
+        private val AUTHOR_RVFILES_GITHUB_URI = Uri.parse("https://github.com/Rve27")
+        private val AUTHOR_RVFILES_TELEGRAM_URI = Uri.parse("https://t.me/rve270")
     }
 }
