@@ -1,11 +1,13 @@
 /*
  * Copyright (c) 2020 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
 package me.zhanghai.android.files.app
 
-import android.os.AsyncTask
+import java.util.Properties
+import java.util.concurrent.Executors
 import android.os.Build
 import android.webkit.WebView
 import jcifs.context.SingletonContext
@@ -23,7 +25,6 @@ import me.zhanghai.android.files.storage.StorageVolumeListLiveData
 import me.zhanghai.android.files.storage.WebDavServerAuthenticator
 import me.zhanghai.android.files.theme.custom.CustomThemeHelper
 import me.zhanghai.android.files.theme.night.NightModeHelper
-import java.util.Properties
 import me.zhanghai.android.files.provider.ftp.client.Client as FtpClient
 import me.zhanghai.android.files.provider.sftp.client.Client as SftpClient
 import me.zhanghai.android.files.provider.smb.client.Client as SmbClient
@@ -62,7 +63,7 @@ private fun initializeFileSystemProviders() {
     FileSystemProviders.install()
     FileSystemProviders.overflowWatchEvents = true
     // SingletonContext.init() calls NameServiceClientImpl.initCache() which connects to network.
-    AsyncTask.THREAD_POOL_EXECUTOR.execute {
+    Executors.newSingleThreadExecutor().execute {
         SingletonContext.init(
             Properties().apply {
                 setProperty("jcifs.netbios.cachePolicy", "0")
