@@ -1,11 +1,15 @@
 /*
  * Copyright (c) 2020 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
 package me.zhanghai.android.files.app
 
-import android.os.AsyncTask
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import android.os.Build
 import android.webkit.WebView
 import jcifs.context.SingletonContext
@@ -62,7 +66,8 @@ private fun initializeFileSystemProviders() {
     FileSystemProviders.install()
     FileSystemProviders.overflowWatchEvents = true
     // SingletonContext.init() calls NameServiceClientImpl.initCache() which connects to network.
-    AsyncTask.THREAD_POOL_EXECUTOR.execute {
+    val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    coroutineScope.launch {
         SingletonContext.init(
             Properties().apply {
                 setProperty("jcifs.netbios.cachePolicy", "0")
