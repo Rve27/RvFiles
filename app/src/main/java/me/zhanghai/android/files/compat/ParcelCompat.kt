@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2020 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -16,13 +17,18 @@ fun Parcel.writeBooleanCompat(value: Boolean) {
     ParcelCompat.writeBoolean(this, value)
 }
 
+@Suppress("DEPRECATION")
 fun <E : Parcelable?, L : MutableList<E>> Parcel.readParcelableListCompat(
     list: L,
     classLoader: ClassLoader?
 ): L {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         @Suppress("UNCHECKED_CAST")
-        return readParcelableList(list, classLoader) as L
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            readParcelableList(list, E::class.java, classLoader) as L
+        } else {
+            readParcelableList(list, classLoader) as L
+        }
     } else {
         val size = readInt()
         if (size == -1) {
@@ -32,7 +38,11 @@ fun <E : Parcelable?, L : MutableList<E>> Parcel.readParcelableListCompat(
         val listSize = list.size
         for (index in 0..<size) {
             @Suppress("UNCHECKED_CAST")
-            val element = readParcelable<E>(classLoader) as E
+            val element = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                readParcelable(classLoader, E::class.java)
+            } else {
+                readParcelable<E>(classLoader)
+            } as E
             if (index < listSize) {
                 list[index] = element
             } else {
@@ -61,5 +71,11 @@ fun <T : Parcelable?> Parcel.writeParcelableListCompat(value: List<T>?, flags: I
     }
 }
 
-@Suppress("UNCHECKED_CAST")
-fun <T> Parcel.readSerializableCompat(): T? = readSerializable() as T?
+@Suppress("UNCHECKED_CAST", "DEPRECATION")
+fun <T> Parcel.readSerializableCompat(): T? {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        readSerializable(null, T::class.java) as T?
+    } else {
+        readSerializable() as T?
+    }
+}
