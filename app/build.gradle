@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -215,4 +216,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-crashlytics-ndk'
 //#endif
+}
+
+configurations.all {
+    resolutionStrategy {
+        force 'org.bouncycastle:bcprov-jdk15to18:1.80'
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
+    }
 }
