@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2020 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -66,7 +67,7 @@ class FileByteChannel(
         } catch (e: SMBRuntimeException) {
             throw e.toIOException()
         }
-        source.position(sourcePosition + bytesWritten)
+        source.position(sourcePosition + bytesWritten.toInt())
     }
 
     @Throws(IOException::class)
