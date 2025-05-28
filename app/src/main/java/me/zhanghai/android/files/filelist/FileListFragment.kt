@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -41,6 +42,7 @@ import androidx.core.graphics.drawable.IconCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePaddingRelative
+import androidx.core.view.MenuProvider
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -192,12 +194,6 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         viewModel.search(query)
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -207,8 +203,122 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
             .also { binding = it }
             .root
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuBinding = MenuBinding.inflate(menu, menuInflater)
+                setUpSearchView()
+            }
+
+            override fun onPrepareMenu(menu: Menu) {
+                updateViewSortMenuItems()
+                updateSelectAllMenuItem()
+                updateShowHiddenFilesMenuItem()
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    android.R.id.home -> {
+                        binding.drawerLayout?.openDrawer(GravityCompat.START)
+                        if (binding.persistentDrawerLayout != null) {
+                            Settings.FILE_LIST_PERSISTENT_DRAWER_OPEN.putValue(
+                                !Settings.FILE_LIST_PERSISTENT_DRAWER_OPEN.valueCompat
+                            )
+                        }
+                        true
+                    }
+                    R.id.action_view_list -> {
+                        viewModel.viewType = FileViewType.LIST
+                        true
+                    }
+                    R.id.action_view_grid -> {
+                        viewModel.viewType = FileViewType.GRID
+                        true
+                    }
+                    R.id.action_sort_by_name -> {
+                        viewModel.setSortBy(By.NAME)
+                        true
+                    }
+                    R.id.action_sort_by_type -> {
+                        viewModel.setSortBy(By.TYPE)
+                        true
+                    }
+                    R.id.action_sort_by_size -> {
+                        viewModel.setSortBy(By.SIZE)
+                        true
+                    }
+                    R.id.action_sort_by_last_modified -> {
+                        viewModel.setSortBy(By.LAST_MODIFIED)
+                        true
+                    }
+                    R.id.action_sort_order_ascending -> {
+                        viewModel.setSortOrder(
+                            if (!menuBinding.sortOrderAscendingItem.isChecked) {
+                                Order.ASCENDING
+                            } else {
+                                Order.DESCENDING
+                            }
+                        )
+                        true
+                    }
+                    R.id.action_sort_directories_first -> {
+                        viewModel.setSortDirectoriesFirst(!menuBinding.sortDirectoriesFirstItem.isChecked)
+                        true
+                    }
+                    R.id.action_view_sort_path_specific -> {
+                        viewModel.isViewSortPathSpecific = !menuBinding.viewSortPathSpecificItem.isChecked
+                        true
+                    }
+                    R.id.action_new_task -> {
+                        newTask()
+                        true
+                    }
+                    R.id.action_navigate_up -> {
+                        navigateUp()
+                        true
+                    }
+                    R.id.action_navigate_to -> {
+                        showNavigateToPathDialog()
+                        true
+                    }
+                    R.id.action_refresh -> {
+                        refresh()
+                        true
+                    }
+                    R.id.action_select_all -> {
+                        selectAllFiles()
+                        true
+                    }
+                    R.id.action_show_hidden_files -> {
+                        setShowHiddenFiles(!menuBinding.showHiddenFilesItem.isChecked)
+                        true
+                    }
+                    R.id.action_share -> {
+                        share()
+                        true
+                    }
+                    R.id.action_copy_path -> {
+                        copyPath()
+                        true
+                    }
+                    R.id.action_open_in_terminal -> {
+                        openInTerminal()
+                        true
+                    }
+                    R.id.action_add_bookmark -> {
+                        addBookmark()
+                        true
+                    }
+                    R.id.action_create_shortcut -> {
+                        createShortcut()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner)
 
         if (savedInstanceState == null) {
             navigationFragment = NavigationFragment()
@@ -382,14 +492,6 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-
-        menuBinding = MenuBinding.inflate(menu, inflater)
-        menuBinding.viewSortItem.subMenu!!.setGroupDividerEnabledCompat(true)
-        setUpSearchView()
-    }
-
     private fun setUpSearchView() {
         val searchView = menuBinding.searchItem.actionView as FixQueryChangeSearchView
         // MenuItem.OnActionExpandListener.onMenuItemActionExpand() is called before SearchView
@@ -433,115 +535,6 @@ class FileListFragment : Fragment(), BreadcrumbLayout.Listener, FileListAdapter.
     private fun collapseSearchView() {
         if (this::menuBinding.isInitialized && menuBinding.searchItem.isActionViewExpanded) {
             menuBinding.searchItem.collapseActionView()
-        }
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
-
-        updateViewSortMenuItems()
-        updateSelectAllMenuItem()
-        updateShowHiddenFilesMenuItem()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                binding.drawerLayout?.openDrawer(GravityCompat.START)
-                if (binding.persistentDrawerLayout != null) {
-                    Settings.FILE_LIST_PERSISTENT_DRAWER_OPEN.putValue(
-                        !Settings.FILE_LIST_PERSISTENT_DRAWER_OPEN.valueCompat
-                    )
-                }
-                true
-            }
-            R.id.action_view_list -> {
-                viewModel.viewType = FileViewType.LIST
-                true
-            }
-            R.id.action_view_grid -> {
-                viewModel.viewType = FileViewType.GRID
-                true
-            }
-            R.id.action_sort_by_name -> {
-                viewModel.setSortBy(By.NAME)
-                true
-            }
-            R.id.action_sort_by_type -> {
-                viewModel.setSortBy(By.TYPE)
-                true
-            }
-            R.id.action_sort_by_size -> {
-                viewModel.setSortBy(By.SIZE)
-                true
-            }
-            R.id.action_sort_by_last_modified -> {
-                viewModel.setSortBy(By.LAST_MODIFIED)
-                true
-            }
-            R.id.action_sort_order_ascending -> {
-                viewModel.setSortOrder(
-                    if (!menuBinding.sortOrderAscendingItem.isChecked) {
-                        Order.ASCENDING
-                    } else {
-                        Order.DESCENDING
-                    }
-                )
-                true
-            }
-            R.id.action_sort_directories_first -> {
-                viewModel.setSortDirectoriesFirst(!menuBinding.sortDirectoriesFirstItem.isChecked)
-                true
-            }
-            R.id.action_view_sort_path_specific -> {
-                viewModel.isViewSortPathSpecific = !menuBinding.viewSortPathSpecificItem.isChecked
-                true
-            }
-            R.id.action_new_task -> {
-                newTask()
-                true
-            }
-            R.id.action_navigate_up -> {
-                navigateUp()
-                true
-            }
-            R.id.action_navigate_to -> {
-                showNavigateToPathDialog()
-                true
-            }
-            R.id.action_refresh -> {
-                refresh()
-                true
-            }
-            R.id.action_select_all -> {
-                selectAllFiles()
-                true
-            }
-            R.id.action_show_hidden_files -> {
-                setShowHiddenFiles(!menuBinding.showHiddenFilesItem.isChecked)
-                true
-            }
-            R.id.action_share -> {
-                share()
-                true
-            }
-            R.id.action_copy_path -> {
-                copyPath()
-                true
-            }
-            R.id.action_open_in_terminal -> {
-                openInTerminal()
-                true
-            }
-            R.id.action_add_bookmark -> {
-                addBookmark()
-                true
-            }
-            R.id.action_create_shortcut -> {
-                createShortcut()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
