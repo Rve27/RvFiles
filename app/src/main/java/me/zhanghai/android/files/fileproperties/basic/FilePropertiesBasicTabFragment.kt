@@ -1,10 +1,12 @@
 /*
  * Copyright (c) 2018 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
 package me.zhanghai.android.files.fileproperties.basic
 
+import android.view.View
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
 import java8.nio.file.FileVisitResult
@@ -41,8 +43,8 @@ class FilePropertiesBasicTabFragment : FilePropertiesTabFragment() {
 
     private var contentJob: Job? = null
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         viewModel.fileLiveData.observe(viewLifecycleOwner) { onFileChanged(it) }
     }

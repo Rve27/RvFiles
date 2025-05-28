@@ -1,10 +1,12 @@
 /*
  * Copyright (c) 2018 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
 package me.zhanghai.android.files.fileproperties.permission
 
+import android.view.View
 import android.os.Bundle
 import me.zhanghai.android.files.R
 import me.zhanghai.android.files.file.FileItem
@@ -20,8 +22,8 @@ import me.zhanghai.android.files.util.viewModels
 class FilePropertiesPermissionTabFragment : FilePropertiesTabFragment() {
     private val viewModel by viewModels<FilePropertiesFileViewModel>({ requireParentFragment() })
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         viewModel.fileLiveData.observe(viewLifecycleOwner) { onFileChanged(it) }
     }
