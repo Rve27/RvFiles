@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2020 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
 package me.zhanghai.android.files.fileproperties.apk
 
 import android.content.pm.PackageManager
-import android.os.AsyncTask
 import android.os.Build
 import java8.nio.file.Path
 import me.zhanghai.android.files.app.packageManager
@@ -20,8 +20,16 @@ import me.zhanghai.android.files.util.sha1Digest
 import me.zhanghai.android.files.util.toHexString
 import me.zhanghai.android.files.util.valueCompat
 import java.io.IOException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.withContext
 
 class ApkInfoLiveData(path: Path) : PathObserverLiveData<Stateful<ApkInfo>>(path) {
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
     init {
         loadValue()
         observe()
@@ -29,7 +37,7 @@ class ApkInfoLiveData(path: Path) : PathObserverLiveData<Stateful<ApkInfo>>(path
 
     override fun loadValue() {
         value = Loading(value?.value)
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        coroutineScope.launch {
             val value = try {
                 // We must always pass in PackageManager.GET_SIGNATURES for
                 // PackageManager.getPackageArchiveInfo() to call
@@ -82,7 +90,14 @@ class ApkInfoLiveData(path: Path) : PathObserverLiveData<Stateful<ApkInfo>>(path
             } catch (e: Exception) {
                 Failure(valueCompat.value, e)
             }
-            postValue(value)
+            withContext(Dispatchers.Main) {
+                postValue(value)
+            }
         }
+    }
+
+    override fun onInactive() {
+        super.onInactive()
+        coroutineScope.cancel()
     }
 }
