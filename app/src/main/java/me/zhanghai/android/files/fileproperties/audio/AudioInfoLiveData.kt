@@ -1,15 +1,19 @@
 /*
  * Copyright (c) 2020 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
 package me.zhanghai.android.files.fileproperties.audio
 
 import android.media.MediaMetadataRetriever
-import android.os.AsyncTask
 import android.os.Build
 import java.time.Duration
 import java8.nio.file.Path
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import me.zhanghai.android.files.compat.METADATA_KEY_SAMPLERATE
 import me.zhanghai.android.files.compat.use
 import me.zhanghai.android.files.fileproperties.PathObserverLiveData
@@ -22,6 +26,8 @@ import me.zhanghai.android.files.util.setDataSource
 import me.zhanghai.android.files.util.valueCompat
 
 class AudioInfoLiveData(path: Path) : PathObserverLiveData<Stateful<AudioInfo>>(path) {
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     init {
         loadValue()
         observe()
@@ -29,7 +35,7 @@ class AudioInfoLiveData(path: Path) : PathObserverLiveData<Stateful<AudioInfo>>(
 
     override fun loadValue() {
         value = Loading(value?.value)
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        coroutineScope.launch {
             val value = try {
                 val audioInfo = MediaMetadataRetriever().use { retriever ->
                     retriever.setDataSource(path)

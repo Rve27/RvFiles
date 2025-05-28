@@ -1,12 +1,16 @@
 /*
  * Copyright (c) 2019 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
 package me.zhanghai.android.files.fileproperties.permission
 
 import android.content.pm.ApplicationInfo
-import android.os.AsyncTask
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import androidx.lifecycle.MutableLiveData
 import me.zhanghai.android.files.app.packageManager
 import me.zhanghai.android.files.util.Failure
@@ -16,13 +20,15 @@ import me.zhanghai.android.files.util.Success
 import me.zhanghai.android.files.util.valueCompat
 
 abstract class PrincipalListLiveData : MutableLiveData<Stateful<List<PrincipalItem>>>() {
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     init {
         loadValue()
     }
 
     private fun loadValue() {
         value = Loading(value?.value)
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        coroutineScope.launch {
             val value = try {
                 val principals = androidPrincipals
                 val androidIds = principals.mapTo(mutableSetOf()) { it.id }

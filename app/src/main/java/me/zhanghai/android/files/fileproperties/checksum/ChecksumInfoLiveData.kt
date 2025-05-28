@@ -5,8 +5,12 @@
 
 package me.zhanghai.android.files.fileproperties.checksum
 
-import android.os.AsyncTask
 import java8.nio.file.Path
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
 import me.zhanghai.android.files.fileproperties.PathObserverLiveData
 import me.zhanghai.android.files.provider.common.newInputStream
 import me.zhanghai.android.files.util.Failure
@@ -15,11 +19,10 @@ import me.zhanghai.android.files.util.Stateful
 import me.zhanghai.android.files.util.Success
 import me.zhanghai.android.files.util.toHexString
 import me.zhanghai.android.files.util.valueCompat
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Future
 
 class ChecksumInfoLiveData(path: Path) : PathObserverLiveData<Stateful<ChecksumInfo>>(path) {
-    private var future: Future<Unit>? = null
+    private var job: Job? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     init {
         loadValue()
@@ -27,9 +30,9 @@ class ChecksumInfoLiveData(path: Path) : PathObserverLiveData<Stateful<ChecksumI
     }
 
     override fun loadValue() {
-        future?.cancel(true)
+        job?.cancel()
         value = Loading(value?.value)
-        future = (AsyncTask.THREAD_POOL_EXECUTOR as ExecutorService).submit<Unit> {
+        job = coroutineScope.launch {
             val value = try {
                 val messageDigests =
                     ChecksumInfo.Algorithm.entries.associateWith { it.createMessageDigest() }
@@ -57,6 +60,6 @@ class ChecksumInfoLiveData(path: Path) : PathObserverLiveData<Stateful<ChecksumI
     override fun close() {
         super.close()
 
-        future?.cancel(true)
+        job?.cancel()
     }
 }

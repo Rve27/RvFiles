@@ -1,12 +1,16 @@
 /*
  * Copyright (c) 2020 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
 package me.zhanghai.android.files.fileproperties.video
 
 import android.media.MediaMetadataRetriever
-import android.os.AsyncTask
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import android.util.Size
 import java.time.Duration
 import java8.nio.file.Path
@@ -23,6 +27,8 @@ import me.zhanghai.android.files.util.setDataSource
 import me.zhanghai.android.files.util.valueCompat
 
 class VideoInfoLiveData(path: Path) : PathObserverLiveData<Stateful<VideoInfo>>(path) {
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     init {
         loadValue()
         observe()
@@ -30,7 +36,7 @@ class VideoInfoLiveData(path: Path) : PathObserverLiveData<Stateful<VideoInfo>>(
 
     override fun loadValue() {
         value = Loading(value?.value)
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        coroutineScope.launch {
             val value = try {
                 val videoInfo = MediaMetadataRetriever().use { retriever ->
                     retriever.setDataSource(path)

@@ -1,12 +1,16 @@
 /*
  * Copyright (c) 2019 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
 package me.zhanghai.android.files.fileproperties
 
-import android.os.AsyncTask
 import java8.nio.file.Path
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import me.zhanghai.android.files.file.FileItem
 import me.zhanghai.android.files.file.loadFileItem
 import me.zhanghai.android.files.util.Failure
@@ -23,6 +27,8 @@ class FileLiveData private constructor(
 
     constructor(file: FileItem) : this(file.path, file)
 
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     init {
         if (file != null) {
             value = Success(file)
@@ -34,7 +40,7 @@ class FileLiveData private constructor(
 
     override fun loadValue() {
         value = Loading(value?.value)
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        coroutineScope.launch {
             val value = try {
                 val file = path.loadFileItem()
                 Success(file)

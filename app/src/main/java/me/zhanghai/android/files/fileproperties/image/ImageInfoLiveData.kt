@@ -6,11 +6,14 @@
 package me.zhanghai.android.files.fileproperties.image
 
 import android.graphics.BitmapFactory
-import android.os.AsyncTask
 import android.util.Size
 import androidx.exifinterface.media.ExifInterface
 import com.caverock.androidsvg.SVG
 import java8.nio.file.Path
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import me.zhanghai.android.files.file.MimeType
 import me.zhanghai.android.files.fileproperties.PathObserverLiveData
 import me.zhanghai.android.files.provider.common.getLastModifiedTime
@@ -28,6 +31,8 @@ class ImageInfoLiveData(
     path: Path,
     private val mimeType: MimeType
 ) : PathObserverLiveData<Stateful<ImageInfo>>(path) {
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     init {
         loadValue()
         observe()
@@ -35,7 +40,7 @@ class ImageInfoLiveData(
 
     override fun loadValue() {
         value = Loading(value?.value)
-        AsyncTask.THREAD_POOL_EXECUTOR.execute {
+        coroutineScope.launch {
             val value = try {
                 val imageInfo = when (mimeType) {
                     MimeType.IMAGE_SVG_XML -> {
