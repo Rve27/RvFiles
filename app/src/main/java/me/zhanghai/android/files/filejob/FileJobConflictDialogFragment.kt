@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -141,7 +142,7 @@ class FileJobConflictDialogFragment : AppCompatDialogFragment() {
             .create()
             .apply {
                 setCanceledOnTouchOutside(false)
-                window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+                window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
             }
     }
 
