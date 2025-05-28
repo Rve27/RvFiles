@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2019 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
 package me.zhanghai.android.files.filelist
 
-import android.os.AsyncTask
 import java8.nio.file.Path
 import me.zhanghai.android.files.file.FileItem
 import me.zhanghai.android.files.file.loadFileItem
@@ -17,23 +17,27 @@ import me.zhanghai.android.files.util.Stateful
 import me.zhanghai.android.files.util.Success
 import me.zhanghai.android.files.util.valueCompat
 import java.io.IOException
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Future
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class SearchFileListLiveData(
     private val path: Path,
     private val query: String
 ) : CloseableLiveData<Stateful<List<FileItem>>>() {
-    private var future: Future<Unit>? = null
+    private var job: Job? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     init {
         loadValue()
     }
 
     fun loadValue() {
-        future?.cancel(true)
+        job?.cancel()
         value = Loading(emptyList())
-        future = (AsyncTask.THREAD_POOL_EXECUTOR as ExecutorService).submit<Unit> {
+        job = coroutineScope.launch {
             val fileList = mutableListOf<FileItem>()
             try {
                 path.search(query, INTERVAL_MILLIS) { paths: List<Path> ->
@@ -58,7 +62,7 @@ class SearchFileListLiveData(
     }
 
     override fun close() {
-        future?.cancel(true)
+        job?.cancel()
     }
 
     companion object {

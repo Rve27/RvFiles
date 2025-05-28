@@ -1,13 +1,18 @@
 /*
  * Copyright (c) 2018 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
 package me.zhanghai.android.files.filelist
 
-import android.os.AsyncTask
 import java8.nio.file.DirectoryIteratorException
 import java8.nio.file.Path
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.cancel
 import me.zhanghai.android.files.file.FileItem
 import me.zhanghai.android.files.file.loadFileItem
 import me.zhanghai.android.files.provider.common.newDirectoryStream
@@ -18,11 +23,10 @@ import me.zhanghai.android.files.util.Stateful
 import me.zhanghai.android.files.util.Success
 import me.zhanghai.android.files.util.valueCompat
 import java.io.IOException
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Future
 
 class FileListLiveData(private val path: Path) : CloseableLiveData<Stateful<List<FileItem>>>() {
-    private var future: Future<Unit>? = null
+    private var job: Job? = null
+    private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val observer: PathObserver
 
@@ -35,9 +39,9 @@ class FileListLiveData(private val path: Path) : CloseableLiveData<Stateful<List
     }
 
     fun loadValue() {
-        future?.cancel(true)
+        job?.cancel()
         value = Loading(value?.value)
-        future = (AsyncTask.THREAD_POOL_EXECUTOR as ExecutorService).submit<Unit> {
+        job = coroutineScope.launch {
             val value = try {
                 path.newDirectoryStream().use { directoryStream ->
                     val fileList = mutableListOf<FileItem>()
@@ -78,6 +82,6 @@ class FileListLiveData(private val path: Path) : CloseableLiveData<Stateful<List
 
     override fun close() {
         observer.close()
-        future?.cancel(true)
+        job?.cancel()
     }
 }
