@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -1055,7 +1056,6 @@ private fun FileJob.delete(path: Path, transferInfo: TransferInfo?, actionAllInf
                     return
                 }
                 FileJobErrorAction.NEUTRAL -> throw InterruptedIOException()
-                else -> throw AssertionError(result.action)
             }
         }
     } while (retry)
@@ -1694,7 +1694,6 @@ private fun FileJob.restoreSeLinuxContext(
                     return
                 }
                 FileJobErrorAction.NEUTRAL -> throw InterruptedIOException()
-                else -> throw AssertionError(result.action)
             }
         }
     } while (retry)
@@ -1839,7 +1838,6 @@ private fun FileJob.setGroup(
                     return
                 }
                 FileJobErrorAction.NEUTRAL -> throw InterruptedIOException()
-                else -> throw AssertionError(result.action)
             }
         }
     } while (retry)
@@ -1985,7 +1983,6 @@ private fun FileJob.setMode(
                     return
                 }
                 FileJobErrorAction.NEUTRAL -> throw InterruptedIOException()
-                else -> throw AssertionError(result.action)
             }
         }
     } while (retry)
@@ -2105,7 +2102,6 @@ private fun FileJob.setOwner(
                     return
                 }
                 FileJobErrorAction.NEUTRAL -> throw InterruptedIOException()
-                else -> throw AssertionError(result.action)
             }
         }
     } while (retry)
@@ -2235,7 +2231,6 @@ private fun FileJob.setSeLinuxContext(
                     return
                 }
                 FileJobErrorAction.NEUTRAL -> throw InterruptedIOException()
-                else -> throw AssertionError(result.action)
             }
         }
     } while (retry)
