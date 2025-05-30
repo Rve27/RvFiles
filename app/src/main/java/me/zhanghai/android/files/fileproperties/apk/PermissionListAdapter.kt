@@ -36,7 +36,9 @@ class PermissionListAdapter : SimpleAdapter<PermissionItem, PermissionListAdapte
             true
         }
         val label = permission.label
-        binding.labelText.text = label?.capitalize(Locale.getDefault()) ?: name
+        binding.labelText.text = label?.replaceFirstChar {
+            if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+        } ?: name
         binding.labelText.isBold = (permission.permissionInfo?.protectionCompat
             == PermissionInfo.PROTECTION_DANGEROUS)
         binding.nameText.isVisible = label != null
