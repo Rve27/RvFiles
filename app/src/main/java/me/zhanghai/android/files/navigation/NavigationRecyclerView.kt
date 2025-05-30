@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -12,6 +13,8 @@ import android.util.AttributeSet
 import android.view.WindowInsets
 import androidx.annotation.AttrRes
 import androidx.core.graphics.withSave
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.RecyclerView
 import me.zhanghai.android.files.R
@@ -66,30 +69,29 @@ class NavigationRecyclerView : RecyclerView {
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
+        val compatInsets = WindowInsetsCompat.toWindowInsetsCompat(insets, this)
         val isLayoutDirectionRtl = isLayoutDirectionRtl
         insetStart = if (isLayoutDirectionRtl) {
-            insets.systemWindowInsetRight
+            compatInsets.getInsets(WindowInsetsCompat.Type.systemBars()).right
         } else {
-            insets.systemWindowInsetLeft
+            compatInsets.getInsets(WindowInsetsCompat.Type.systemBars()).left
         }
         val paddingLeft = if (isLayoutDirectionRtl) 0 else insetStart
         val paddingRight = if (isLayoutDirectionRtl) insetStart else 0
-        insetTop = insets.systemWindowInsetTop
+        insetTop = compatInsets.getInsets(WindowInsetsCompat.Type.systemBars()).top
         setPadding(
             paddingLeft, verticalPadding + insetTop, paddingRight,
-            verticalPadding + insets.systemWindowInsetBottom
+            verticalPadding + compatInsets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
         )
         requestLayout()
-        return insets.replaceSystemWindowInsets(
-            insets.systemWindowInsetLeft - paddingLeft, 0,
-            insets.systemWindowInsetRight - paddingRight, 0
-        )
+        return insets
     }
 
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
 
-        if (context.activity!!.window.statusBarColor == Color.TRANSPARENT) {
+        val window = context.activity?.window
+        if (window != null && WindowInsetsControllerCompat(window, this).isAppearanceLightStatusBars) {
             canvas.withSave {
                 canvas.translate(scrollX.toFloat(), scrollY.toFloat())
                 scrim.setBounds(0, 0, width, insetTop)
