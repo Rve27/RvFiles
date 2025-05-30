@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -17,6 +18,7 @@ import java.util.Random
 @Parcelize
 // @see https://youtrack.jetbrains.com/issue/KT-24842
 // @Parcelize throws IllegalAccessError if the primary constructor is private.
+@ConsistentCopyVisibility
 data class BookmarkDirectory internal constructor(
     val id: Long,
     val customName: String?,

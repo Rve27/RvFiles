@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -9,6 +10,7 @@ import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 
+@ConsistentCopyVisibility
 data class StandardDirectory internal constructor(
     @DrawableRes val iconRes: Int,
     @StringRes private val titleRes: Int,
