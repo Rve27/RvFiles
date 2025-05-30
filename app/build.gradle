@@ -67,6 +67,7 @@ android {
     externalNativeBuild {
         cmake {
             path 'CMakeLists.txt'
+            version "3.31.6"
         }
     }
     lint {
