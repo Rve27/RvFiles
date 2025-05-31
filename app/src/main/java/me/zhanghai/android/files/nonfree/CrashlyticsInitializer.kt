@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -31,18 +32,29 @@ object CrashlyticsInitializer {
     }
 
     private fun verifyPackageName(): Boolean {
-        return application.packageName == "me.zhanghai.android.files"
+        return application.packageName == "me.rve.files"
     }
 
     @SuppressLint("PackageManagerGetSignatures")
     private fun verifySignature(): Boolean {
-        val packageInfo = packageManager.getPackageInfoOrNull(
-            application.packageName, PackageManager.GET_SIGNATURES
-        ) ?: return false
-        val signatures = packageInfo.signatures ?: return false
-        return signatures.size == 1 &&
-            computeCertificateFingerprint(signatures[0]) == "87:3B:9B:60:C7:7C:F7:F3:CD:5F:AE:66" +
-                ":D0:FE:11:2C:4A:86:97:3E:11:8E:E8:A2:9C:34:6C:4C:67:3C:97:F0"
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            val packageInfo = packageManager.getPackageInfoOrNull(
+                application.packageName, PackageManager.GET_SIGNING_CERTIFICATES
+            ) ?: return false
+            val signingInfo = packageInfo.signingInfo ?: return false
+            val signatures = signingInfo.apkContentsSigners
+            return signatures.size == 1 &&
+                computeCertificateFingerprint(signatures[0]) == "E1:33:2C:F9:5E:5E:27:A5:88:00:36:3A:CB:9D:C7:C3:8B:A4:AE:B9:35:6F:96:27:7C:8D:1B:AB:31:58:AB:D0"
+        } else {
+            @Suppress("DEPRECATION")
+            val packageInfo = packageManager.getPackageInfoOrNull(
+                application.packageName, PackageManager.GET_SIGNATURES
+            ) ?: return false
+            @Suppress("DEPRECATION")
+            val signatures = packageInfo.signatures ?: return false
+            return signatures.size == 1 &&
+                computeCertificateFingerprint(signatures[0]) == "E1:33:2C:F9:5E:5E:27:A5:88:00:36:3A:CB:9D:C7:C3:8B:A4:AE:B9:35:6F:96:27:7C:8D:1B:AB:31:58:AB:D0"
+        }
     }
 
     private fun computeCertificateFingerprint(certificate: Signature): String {
