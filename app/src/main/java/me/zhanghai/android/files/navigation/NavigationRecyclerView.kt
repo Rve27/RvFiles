@@ -9,6 +9,7 @@ package me.zhanghai.android.files.navigation
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.WindowInsets
 import androidx.annotation.AttrRes
@@ -32,7 +33,7 @@ class NavigationRecyclerView : RecyclerView {
     private val actionBarSize =
         context.getDimensionPixelSizeByAttr(androidx.appcompat.R.attr.actionBarSize)
     private val maxWidth = context.getDimensionPixelSize(R.dimen.navigation_max_width)
-    private var scrim = context.getDrawableByAttr(android.R.attr.statusBarColor)
+    private var scrim = ColorDrawable(Color.TRANSPARENT)
 
     private var insetStart = 0
     private var insetTop = 0
@@ -48,9 +49,19 @@ class NavigationRecyclerView : RecyclerView {
     ) : super(context, attrs, defStyleAttr)
 
     init {
+        updateStatusBarScrim()
         updatePadding(top = verticalPadding, bottom = verticalPadding)
         fitsSystemWindows = true
         setWillNotDraw(false)
+    }
+
+    private fun updateStatusBarScrim() {
+        val window = context.activity?.window
+        if (window != null) {
+            val windowInsetsController = WindowInsetsControllerCompat(window, this)
+            val isLight = windowInsetsController.isAppearanceLightStatusBars
+            scrim = ColorDrawable(if (isLight) Color.argb(0x26, 0, 0, 0) else Color.TRANSPARENT)
+        }
     }
 
     override fun onMeasure(widthSpec: Int, heightSpec: Int) {
