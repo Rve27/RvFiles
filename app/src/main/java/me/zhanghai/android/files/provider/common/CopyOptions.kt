@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -52,15 +53,11 @@ fun Array<out CopyOption>.toCopyOptions(): CopyOptions {
                     StandardCopyOption.REPLACE_EXISTING -> replaceExisting = true
                     StandardCopyOption.COPY_ATTRIBUTES -> copyAttributes = true
                     StandardCopyOption.ATOMIC_MOVE -> atomicMove = true
-                    else -> throw UnsupportedOperationException(option.toString())
                 }
             option === LinkOption.NOFOLLOW_LINKS -> noFollowLinks = true
             option is ProgressCopyOption -> {
                 progressIntervalMillis = option.intervalMillis
                 progressListener = option.listener
-            }
-            else -> {
-                throw UnsupportedOperationException(option.toString())
             }
         }
     }

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -18,7 +19,6 @@ fun Array<out AccessMode>.toAccessModes(): AccessModes {
             AccessMode.READ -> read = true
             AccessMode.WRITE -> write = true
             AccessMode.EXECUTE -> execute = true
-            else -> throw UnsupportedOperationException(mode.toString())
         }
     }
     return AccessModes(read, write, execute)

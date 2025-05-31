@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -50,7 +51,6 @@ fun Set<OpenOption>.toOpenOptions(): OpenOptions {
                 StandardOpenOption.SPARSE -> sparse = true
                 StandardOpenOption.SYNC -> sync = true
                 StandardOpenOption.DSYNC -> dsync = true
-                else -> throw UnsupportedOperationException(option.toString())
             }
             LinkOption.NOFOLLOW_LINKS -> noFollowLinks = true
             else -> throw UnsupportedOperationException(option.toString())

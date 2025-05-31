@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2018 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -22,7 +23,6 @@ fun Array<out LinkOption>.toLinkOptions(): LinkOptions {
     for (option in this) {
         when (option) {
             LinkOption.NOFOLLOW_LINKS -> noFollowLinks = true
-            else -> throw UnsupportedOperationException(option.toString())
         }
     }
     return LinkOptions(noFollowLinks)
