@@ -196,7 +196,7 @@ object DocumentResolver {
         pathDocumentIdCache -= path
         directoryCursorCache -= path
         @Suppress("DEPRECATION")
-        delete(uri)
+        remove(uri)
     }
 
     @Deprecated("", ReplaceWith("remove(uri)"))
@@ -446,7 +446,7 @@ object DocumentResolver {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isRemoveUnsupported(uri)) {
             removeApi24(uri, parentUri)
         } else {
-            delete(uri)
+            remove(uri)
         }
     }
 
@@ -473,9 +473,7 @@ object DocumentResolver {
         val removed = try {
             DocumentsContract.removeDocument(contentResolver, uri, parentUri)
         } catch (e: UnsupportedOperationException) {
-            // Ignored.
-            @Suppress("DEPRECATION")
-            delete(uri)
+            remove(uri)
             return
         } catch (e: Exception) {
             throw ResolverException(e)
