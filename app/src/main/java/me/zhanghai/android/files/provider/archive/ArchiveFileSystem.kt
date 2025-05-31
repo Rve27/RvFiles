@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2019 Hai Zhang <dreaming.in.code.zh@gmail.com>
+ * Copyright (c) 2025 Rve <rve27github@gmail.com>
  * All Rights Reserved.
  */
 
@@ -231,8 +232,8 @@ internal class ArchiveFileSystem(
         @JvmField
         val CREATOR = object : Parcelable.Creator<ArchiveFileSystem> {
             override fun createFromParcel(source: Parcel): ArchiveFileSystem {
-                val archiveFile = source.readParcelable<Parcelable>(Path::class.java.classLoader)
-                    as Path
+                val archiveFile = source.readParcelable<Path>(Path::class.java.classLoader, Path::class.java)
+                    ?: throw IllegalStateException("Failed to read Parcelable Path")
                 return ArchiveFileSystemProvider.getOrNewFileSystem(archiveFile)
             }
 
