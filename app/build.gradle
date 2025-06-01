@@ -92,6 +92,9 @@ android {
         jniLibs {
             useLegacyPackaging true
         }
+        dex {
+            useLegacyPackaging true
+        }
         resources {
             excludes += [
                     'META-INF/DEPENDENCIES',
