@@ -47,9 +47,7 @@ val appInitializers = listOf(
 )
 
 private fun initializeCrashlytics() {
-//#ifdef NONFREE
-    me.zhanghai.android.files.nonfree.CrashlyticsInitializer.initialize()
-//#endif
+
 }
 
 private fun disableHiddenApiChecks() {
